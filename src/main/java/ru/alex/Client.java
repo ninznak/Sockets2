@@ -11,14 +11,24 @@ public class Client {
 
         final String name = "Stepan";
         final String serverAdress = "netology.homework";
+        final String serverResponse = "Ответ пришел от сервера -> ";
 
-        try(Socket clientS = new Socket(serverAdress, Server.PORT);
-            PrintWriter writer = new PrintWriter(clientS.getOutputStream(), true);
-            BufferedReader reader = new BufferedReader(new InputStreamReader(clientS.getInputStream()))
-        ){
-            writer.println("Hello from " + name);
-            System.out.println("Ответ пришел от сервера -> " + reader.readLine());
-        } catch (IOException e){
+        try (Socket clientS = new Socket(serverAdress, Server.PORT);
+             PrintWriter writer = new PrintWriter(clientS.getOutputStream(), true);
+             BufferedReader reader = new BufferedReader(new InputStreamReader(clientS.getInputStream()))
+        ) {
+            System.out.println(serverResponse + reader.readLine());              // первый ответ от сервера
+            writer.println(name);                                                // отправляем имя
+
+            System.out.println(serverResponse + reader.readLine());              // ответ сервера с именем
+            String ageAsk = reader.readLine();
+
+            System.out.println(ageAsk);                                         // запрос на возраст
+            writer.println("no");
+
+            System.out.println(serverResponse + reader.readLine());             // сообщение о допуске к сервису или нет
+
+        } catch (IOException e) {
             throw new RuntimeException(e);
         }
     }

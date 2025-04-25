@@ -12,26 +12,32 @@ public class Server {
     public static final Integer PORT = 8081;
 
     public static void main(String[] args) {
-        final int namePosition = 2;
 
-        try(ServerSocket serverSocket = new ServerSocket(PORT)){
+        try (ServerSocket serverSocket = new ServerSocket(PORT)) {
+            while (true) {
+                try (Socket clientSocket = serverSocket.accept();
+                     PrintWriter printWriter = new PrintWriter(clientSocket.getOutputStream(), true);
+                     BufferedReader clientReader = new BufferedReader(new InputStreamReader(clientSocket.getInputStream()))
+                ) {
+                    printWriter.println("Тебя приветствует сервер! Скажи, как тебя зовут?");                // Сообщение при подключении
+                    String nameFromClient = clientReader.readLine();
 
-            while (true){
-                try(Socket clientSocket = serverSocket.accept();
-                    PrintWriter printWriter = new PrintWriter(clientSocket.getOutputStream(), true);
-                    BufferedReader clientReader = new BufferedReader(new InputStreamReader(clientSocket.getInputStream()))
-                )
-                {
-                    String dataFromClient = clientReader.readLine();
-                    String nameClient = dataFromClient.split(" ")[namePosition];
-                    printWriter.println("Привет " + nameClient + "! Твой порт " + clientSocket.getPort());
-                    System.out.println(dataFromClient);
+                    System.out.println("Получено имя подключившегося клиента. Его имя " + nameFromClient);
+                    printWriter.println("Привет, " + nameFromClient + "! Теперь скажи, сколько тебе лет?"); // Сообщение после ввода имени
+                    printWriter.println("Тебе больше 18 лет? (yes/no)");
+
+                    String ageFromClient = clientReader.readLine();
+
+                    if (ageFromClient.equals("yes")) {
+                        printWriter.println("Привет, " + nameFromClient + "! Добро пожаловать на сайт!");
+                    } else {
+                        printWriter.println("Тебе нельзя пользоваться сервисом, если тебе нет 18 лет! Выход из программы.");
+                        return;
+                    }
                 }
             }
-
-        } catch (IOException e){
+        } catch (IOException e) {
             throw new RuntimeException(e);
         }
-
     }
 }
