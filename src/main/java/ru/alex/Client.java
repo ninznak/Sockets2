@@ -10,8 +10,9 @@ public class Client {
     public static void main(String[] args) {
 
         final String name = "Stepan";
+        final String serverAdress = "netology.homework";
 
-        try(Socket clientS = new Socket("localhost", Server.PORT);
+        try(Socket clientS = new Socket(serverAdress, Server.PORT);
             PrintWriter writer = new PrintWriter(clientS.getOutputStream(), true);
             BufferedReader reader = new BufferedReader(new InputStreamReader(clientS.getInputStream()))
         ){
